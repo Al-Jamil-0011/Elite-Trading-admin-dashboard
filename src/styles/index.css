@@ -1,0 +1,41 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* Dropdown styling */
+.a-dd-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+.a-dd-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Table styling */
+.a-row {
+  transition: all 0.15s ease;
+}
+.a-row:hover {
+  background: rgba(255, 255, 255, 0.015);
+}
+.a-tscroll::-webkit-scrollbar {
+  height: 8px;
+}
+.a-tscroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+.a-tscroll::-webkit-scrollbar-track {
+  background: transparent;
+}
