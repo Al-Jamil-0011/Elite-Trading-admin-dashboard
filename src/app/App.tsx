@@ -106,13 +106,13 @@ const AACTIVITY = [
 
 function Chip({ label, type }:{ label:string; type:"ok"|"warn"|"err"|"muted"|"brand"|"gold"|"info" }) {
   const s:Record<string,[string,string]>={
-    ok:["rgba(0,208,132,0.1)",C.buy],warn:["rgba(245,158,11,0.1)","#F59E0B"],
-    err:["rgba(255,90,107,0.1)",C.sell],muted:["rgba(100,116,139,0.1)","#94A3B8"],
-    brand:["rgba(128,0,255,0.12)","#C084FC"],gold:["rgba(191,160,109,0.12)",C.gold],
-    info:["rgba(59,130,246,0.12)","#60A5FA"],
+    ok:["rgba(0,208,132,0.15)",C.buy],warn:["rgba(245,158,11,0.15)","#F59E0B"],
+    err:["rgba(255,90,107,0.15)",C.sell],muted:["rgba(100,116,139,0.15)","#94A3B8"],
+    brand:["rgba(128,0,255,0.15)","#C084FC"],gold:["rgba(191,160,109,0.15)",C.gold],
+    info:["rgba(59,130,246,0.15)","#60A5FA"],
   };
   const [bg,color]=s[type];
-  return <span style={{display:"inline-flex",alignItems:"center",gap:5,background:bg,color,border:`1px solid ${color}28`,borderRadius:100,padding:"3px 10px",fontFamily:P,fontSize:10,fontWeight:600,letterSpacing:"0.03em",whiteSpace:"nowrap"}}><span style={{width:4,height:4,borderRadius:"50%",background:color,flexShrink:0}}/>{label}</span>;
+  return <span style={{display:"inline-flex",alignItems:"center",background:bg,color,border:`1px solid ${color}30`,borderRadius:100,padding:"4px 12px",fontFamily:P,fontSize:10.5,fontWeight:600,letterSpacing:"0.04em",whiteSpace:"nowrap"}}>{label}</span>;
 }
 
 function APrimary({ children,onClick,icon,size="md",disabled=false }:{ children?:React.ReactNode;onClick?:()=>void;icon?:React.ReactNode;size?:"sm"|"md";disabled?:boolean }) {
@@ -293,16 +293,16 @@ function AdminTopBar({ section }:{ section:AdminSection }) {
         </div>
         
         {/* Dropdown Menu - Native CSS based toggle */}
-        <div style={{display:"none",position:"absolute",top:"100%",right:0,marginTop:8,background:AD.card,backdropFilter:"blur(20px)",border:`1px solid ${AD.cardB}`,borderRadius:12,width:200,padding:"6px",boxShadow:"0 10px 40px rgba(0,0,0,0.5)",zIndex:2000}}>
-          <button className="a-btn" style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:"8px 10px",background:"transparent",border:"none",borderRadius:8,color:C.t1,fontFamily:P,fontSize:13,cursor:"pointer",textAlign:"left"}}>
-            <User size={14} color={C.t2}/> Profile
+        <div style={{display:"none",position:"absolute",top:"100%",right:0,marginTop:10,background:"#161326",border:`1px solid rgba(255,255,255,0.08)`,borderRadius:12,width:200,padding:"8px",boxShadow:"0 16px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,0,0,0.8)",zIndex:2000}}>
+          <button className="a-dd-item" style={{color:C.t1}}>
+            <User size={15} color={C.t2}/> Profile
           </button>
-          <button className="a-btn" style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:"8px 10px",background:"transparent",border:"none",borderRadius:8,color:C.t1,fontFamily:P,fontSize:13,cursor:"pointer",textAlign:"left"}}>
-            <Settings size={14} color={C.t2}/> Account Settings
+          <button className="a-dd-item" style={{color:C.t1}}>
+            <Settings size={15} color={C.t2}/> Account Settings
           </button>
-          <div style={{height:1,background:AD.cardB,margin:"4px 0"}}/>
-          <button className="a-btn" style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:"8px 10px",background:"transparent",border:"none",borderRadius:8,color:C.sell,fontFamily:P,fontSize:13,cursor:"pointer",textAlign:"left"}}>
-            <LogOut size={14}/> Logout
+          <div style={{height:1,background:AD.cardB,margin:"6px 0"}}/>
+          <button className="a-dd-item" style={{color:C.sell}}>
+            <LogOut size={15}/> Logout
           </button>
         </div>
       </div>
@@ -459,17 +459,19 @@ function ASignals() {
       </div>
       <APrimary onClick={()=>setPubModal(true)} icon={<Plus size={14}/>}>Publish Signal</APrimary>
     </div>
-    <div style={{display:"flex",gap:6,marginBottom:18,alignItems:"center"}}>
-      {tabs.map(t=><button key={t} onClick={()=>setFilter(t)} style={{padding:"6px 15px",borderRadius:8,background:filter===t?C.brand:"transparent",color:filter===t?"#fff":C.td,border:`1px solid ${filter===t?C.brand:AD.cardB}`,fontFamily:P,fontSize:11.5,fontWeight:600,cursor:"pointer",transition:"all 0.15s"}}>{t}</button>)}
-      <span style={{marginLeft:"auto",fontFamily:M,fontSize:10,color:C.td}}>{filtered.length} results</span>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+      <div style={{display:"flex",gap:4,background:"rgba(255,255,255,0.03)",padding:5,borderRadius:10,border:`1px solid rgba(255,255,255,0.05)`}}>
+        {tabs.map(t=><button key={t} onClick={()=>setFilter(t)} style={{padding:"6px 16px",borderRadius:6,background:filter===t?"rgba(255,255,255,0.1)":"transparent",color:filter===t?"#fff":C.td,border:"none",fontFamily:P,fontSize:12,fontWeight:500,cursor:"pointer",transition:"all 0.2s",boxShadow:filter===t?"0 2px 8px rgba(0,0,0,0.2)":"none"}}>{t}</button>)}
+      </div>
+      <span style={{fontFamily:M,fontSize:11,color:C.td}}>{filtered.length} results</span>
     </div>
     <ACard>
       <div className="a-tscroll" style={{overflowX:"auto"}}>
         <div style={{minWidth:1090}}>
-          <div style={{display:"grid",gridTemplateColumns:COLS,padding:"10px 20px",background:AD.th,borderBottom:`1px solid ${AD.cardB}`,borderRadius:"18px 18px 0 0"}}>
+          <div style={{display:"grid",gridTemplateColumns:COLS,padding:"14px 24px",background:AD.nav,position:"sticky",top:0,zIndex:10,borderBottom:`1px solid ${AD.cardB}`,borderRadius:"18px 18px 0 0"}}>
             {HEAD.map(h=><span key={h} style={{fontFamily:M,fontSize:8,color:C.td,letterSpacing:"0.12em"}}>{h}</span>)}
           </div>
-          {filtered.map((s,i)=><div key={s.id} className="a-row" style={{display:"grid",gridTemplateColumns:COLS,padding:"12px 20px",borderBottom:i<filtered.length-1?`1px solid ${AD.cardB}`:"none",alignItems:"center"}}>
+          {filtered.map((s,i)=><div key={s.id} className="a-row" style={{display:"grid",gridTemplateColumns:COLS,padding:"16px 24px",borderBottom:i<filtered.length-1?`1px solid ${AD.cardB}`:"none",alignItems:"center"}}>
             <span style={{fontFamily:M,fontSize:12.5,fontWeight:700,color:C.t1}}>{s.asset}</span>
             <span style={{fontFamily:P,fontSize:11,color:C.tm}}>{s.cat}</span>
             <span style={{fontFamily:P,fontSize:11,color:C.td}}>{s.type}</span>
@@ -481,10 +483,10 @@ function ASignals() {
             <span style={{fontFamily:M,fontSize:11,color:s.tp3==="—"?C.td:C.buy}}>{s.tp3}</span>
             {sChip(s.status)}
             <span style={{fontFamily:M,fontSize:9.5,color:C.td}}>{s.pub}</span>
-            <div style={{display:"flex",gap:5}}>
-              <button title="Edit" style={{width:27,height:27,borderRadius:7,background:"rgba(128,0,255,0.1)",border:"1px solid rgba(128,0,255,0.2)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}><Pencil size={11} color="#C084FC"/></button>
+            <div style={{display:"flex",gap:6}}>
+              <button className="a-btn" title="Edit" style={{width:32,height:32,borderRadius:8,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.15s"}}><Pencil size={13} color={C.t2}/></button>
               {s.status==="Active"&&<button title="Close" onClick={()=>setCloseTarget(s)} style={{width:27,height:27,borderRadius:7,background:"rgba(191,160,109,0.1)",border:"1px solid rgba(191,160,109,0.2)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:12}}>🔒</button>}
-              <button title="Delete" style={{width:27,height:27,borderRadius:7,background:"rgba(255,90,107,0.08)",border:"1px solid rgba(255,90,107,0.18)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}><Trash2 size={11} color={C.sell}/></button>
+              <button className="a-btn" title="Delete" style={{width:32,height:32,borderRadius:8,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.15s"}}><Trash2 size={13} color={C.sell}/></button>
             </div>
           </div>)}
         </div>
@@ -552,10 +554,10 @@ function APosts() {
       <APrimary onClick={()=>setModal(true)} icon={<Plus size={14}/>}>Create Post</APrimary>
     </div>
     <ACard>
-      <div style={{display:"grid",gridTemplateColumns:COLS,padding:"10px 20px",background:AD.th,borderRadius:"18px 18px 0 0",borderBottom:`1px solid ${AD.cardB}`}}>
+      <div style={{display:"grid",gridTemplateColumns:COLS,padding:"14px 24px",background:AD.nav,position:"sticky",top:0,zIndex:10,borderRadius:"18px 18px 0 0",borderBottom:`1px solid ${AD.cardB}`}}>
         {HEAD.map(h=><span key={h} style={{fontFamily:M,fontSize:8,color:C.td,letterSpacing:"0.12em"}}>{h}</span>)}
       </div>
-      {APOSTS.map((post,i)=><div key={post.id} className="a-row" style={{display:"grid",gridTemplateColumns:COLS,padding:"12px 20px",borderBottom:i<APOSTS.length-1?`1px solid ${AD.cardB}`:"none",alignItems:"center"}}>
+      {APOSTS.map((post,i)=><div key={post.id} className="a-row" style={{display:"grid",gridTemplateColumns:COLS,padding:"16px 24px",borderBottom:i<APOSTS.length-1?`1px solid ${AD.cardB}`:"none",alignItems:"center"}}>
         <div style={{width:56,height:36,borderRadius:8,background:C.surface,overflow:"hidden",flexShrink:0}}>
           {post.img?<img src={post.img} alt={post.title} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center"}}><Image size={13} color={C.td}/></div>}
         </div>
@@ -565,9 +567,9 @@ function APosts() {
         <span style={{fontFamily:M,fontSize:12,color:C.t2}}>{post.comments}</span>
         <span style={{fontFamily:M,fontSize:10,color:C.td}}>{post.date}</span>
         <Chip label={post.status} type={post.status==="Published"?"ok":"muted"}/>
-        <div style={{display:"flex",gap:5}}>
-          <button style={{width:27,height:27,borderRadius:7,background:"rgba(128,0,255,0.1)",border:"1px solid rgba(128,0,255,0.2)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}><Pencil size={11} color="#C084FC"/></button>
-          <button style={{width:27,height:27,borderRadius:7,background:"rgba(255,90,107,0.08)",border:"1px solid rgba(255,90,107,0.18)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}><Trash2 size={11} color={C.sell}/></button>
+        <div style={{display:"flex",gap:6}}>
+          <button className="a-btn" title="Edit" style={{width:32,height:32,borderRadius:8,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.15s"}}><Pencil size={13} color={C.t2}/></button>
+          <button className="a-btn" title="Delete" style={{width:32,height:32,borderRadius:8,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.15s"}}><Trash2 size={13} color={C.sell}/></button>
         </div>
       </div>)}
     </ACard>
@@ -645,10 +647,10 @@ function ANotifications() {
         <div style={{padding:"18px 22px",borderBottom:`1px solid ${AD.cardB}`}}>
           <div style={{fontFamily:P,fontSize:14,fontWeight:700,color:C.t1}}>Notification History</div>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:COLS,padding:"10px 22px",background:AD.th,borderBottom:`1px solid ${AD.cardB}`}}>
+        <div style={{display:"grid",gridTemplateColumns:COLS,padding:"14px 24px",background:AD.nav,position:"sticky",top:0,zIndex:10,borderBottom:`1px solid ${AD.cardB}`}}>
           {HEAD.map(h=><span key={h} style={{fontFamily:M,fontSize:8,color:C.td,letterSpacing:"0.12em"}}>{h}</span>)}
         </div>
-        {ANOTIFS.map((n,i)=><div key={n.id} className="a-row" style={{display:"grid",gridTemplateColumns:COLS,padding:"13px 22px",borderBottom:i<ANOTIFS.length-1?`1px solid ${AD.cardB}`:"none",alignItems:"center"}}>
+        {ANOTIFS.map((n,i)=><div key={n.id} className="a-row" style={{display:"grid",gridTemplateColumns:COLS,padding:"16px 24px",borderBottom:i<ANOTIFS.length-1?`1px solid ${AD.cardB}`:"none",alignItems:"center"}}>
           <span style={{fontFamily:P,fontSize:12,fontWeight:500,color:C.t1}}>{n.title}</span>
           <span style={{fontFamily:P,fontSize:11,color:C.tm}}>{n.audience}</span>
           <span style={{fontFamily:M,fontSize:10,color:C.td}}>{n.sent}</span>
@@ -786,7 +788,7 @@ function AUsers() {
     </div>
     <div style={{display:"grid",gridTemplateColumns:selected?"1fr 340px":"1fr",gap:18,alignItems:"start"}}>
       <ACard style={{overflow:"hidden"}}>
-        <div style={{display:"grid",gridTemplateColumns:COLS,padding:"10px 20px",background:AD.th,borderRadius:"18px 18px 0 0",borderBottom:`1px solid ${AD.cardB}`}}>
+        <div style={{display:"grid",gridTemplateColumns:COLS,padding:"14px 24px",background:AD.nav,position:"sticky",top:0,zIndex:10,borderRadius:"18px 18px 0 0",borderBottom:`1px solid ${AD.cardB}`}}>
           {HEAD.map(h=><span key={h} style={{fontFamily:M,fontSize:8,color:C.td,letterSpacing:"0.12em"}}>{h}</span>)}
         </div>
         {filtered.map((u,i)=><div key={u.id} onClick={()=>setSelected(selected?.id===u.id?null:u)} className="a-row" style={{display:"grid",gridTemplateColumns:COLS,padding:"11px 20px",borderBottom:i<filtered.length-1?`1px solid ${AD.cardB}`:"none",alignItems:"center",cursor:"pointer",background:selected?.id===u.id?"rgba(128,0,255,0.09)":"transparent"}}>
@@ -798,9 +800,9 @@ function AUsers() {
           <span style={{fontFamily:M,fontSize:10.5,color:u.trial?C.buy:C.td}}>{u.trial?"Active":"—"}</span>
           <span style={{fontFamily:M,fontSize:9.5,color:C.td}}>{u.joined}</span>
           <span style={{fontFamily:M,fontSize:9.5,color:C.td}}>{u.renewal}</span>
-          <div style={{display:"flex",gap:5}}>
-            <button title="Edit" style={{width:26,height:26,borderRadius:7,background:"rgba(128,0,255,0.1)",border:"1px solid rgba(128,0,255,0.18)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}><Pencil size={10} color="#C084FC"/></button>
-            <button title="Delete" style={{width:26,height:26,borderRadius:7,background:"rgba(255,90,107,0.08)",border:"1px solid rgba(255,90,107,0.16)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}><Trash2 size={10} color={C.sell}/></button>
+          <div style={{display:"flex",gap:6}}>
+            <button className="a-btn" title="Edit" style={{width:32,height:32,borderRadius:8,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.15s"}}><Pencil size={13} color={C.t2}/></button>
+            <button className="a-btn" title="Delete" style={{width:32,height:32,borderRadius:8,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.15s"}}><Trash2 size={13} color={C.sell}/></button>
           </div>
         </div>)}
       </ACard>
@@ -866,10 +868,10 @@ function ACoupons() {
     </div>
     <div style={{fontFamily:M,fontSize:8.5,color:C.td,letterSpacing:"0.14em",marginBottom:13}}>COUPON CODES</div>
     <ACard style={{marginBottom:26}}>
-      <div style={{display:"grid",gridTemplateColumns:COLS,padding:"10px 20px",background:AD.th,borderRadius:"18px 18px 0 0",borderBottom:`1px solid ${AD.cardB}`}}>
+      <div style={{display:"grid",gridTemplateColumns:COLS,padding:"14px 24px",background:AD.nav,position:"sticky",top:0,zIndex:10,borderRadius:"18px 18px 0 0",borderBottom:`1px solid ${AD.cardB}`}}>
         {HEAD.map(h=><span key={h} style={{fontFamily:M,fontSize:8,color:C.td,letterSpacing:"0.12em"}}>{h}</span>)}
       </div>
-      {ACOUPONS.map((cp,i)=><div key={cp.code} className="a-row" style={{display:"grid",gridTemplateColumns:COLS,padding:"12px 20px",borderBottom:i<ACOUPONS.length-1?`1px solid ${AD.cardB}`:"none",alignItems:"center"}}>
+      {ACOUPONS.map((cp,i)=><div key={cp.code} className="a-row" style={{display:"grid",gridTemplateColumns:COLS,padding:"16px 24px",borderBottom:i<ACOUPONS.length-1?`1px solid ${AD.cardB}`:"none",alignItems:"center"}}>
         <span style={{fontFamily:M,fontSize:12.5,fontWeight:700,color:C.brand,letterSpacing:"0.05em"}}>{cp.code}</span>
         <span style={{fontFamily:M,fontSize:12.5,fontWeight:700,color:C.gold}}>{cp.discount}</span>
         <span style={{fontFamily:M,fontSize:10,color:C.td}}>{cp.expiry}</span>
@@ -879,9 +881,9 @@ function ACoupons() {
           <div style={{height:3,borderRadius:100,background:"rgba(255,255,255,0.06)"}}><div style={{width:`${(cp.used/cp.limit)*100}%`,height:"100%",borderRadius:100,background:C.brand}}/></div>
         </div>
         <Chip label={cp.status} type={cp.status==="Active"?"ok":cp.status==="Exhausted"?"warn":"muted"}/>
-        <div style={{display:"flex",gap:5}}>
-          <button style={{width:26,height:26,borderRadius:7,background:"rgba(128,0,255,0.1)",border:"1px solid rgba(128,0,255,0.18)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}><Pencil size={10} color="#C084FC"/></button>
-          <button style={{width:26,height:26,borderRadius:7,background:"rgba(255,90,107,0.08)",border:"1px solid rgba(255,90,107,0.16)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}><Trash2 size={10} color={C.sell}/></button>
+        <div style={{display:"flex",gap:6}}>
+          <button className="a-btn" title="Edit" style={{width:32,height:32,borderRadius:8,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.15s"}}><Pencil size={13} color={C.t2}/></button>
+          <button className="a-btn" title="Delete" style={{width:32,height:32,borderRadius:8,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.15s"}}><Trash2 size={13} color={C.sell}/></button>
         </div>
       </div>)}
     </ACard>
