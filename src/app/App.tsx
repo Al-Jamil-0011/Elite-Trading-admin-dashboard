@@ -294,7 +294,7 @@ function AdminTopBar({ section }: { section: AdminSection }) {
 
       {/* Admin Profile Dropdown */}
       <div style={{ position: "relative" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", background: AD.inp, border: `1px solid ${AD.inpB}`, borderRadius: 9, padding: "4px 10px 4px 4px", transition: "all 0.15s" }} onClick={(e) => { const el = e.currentTarget.nextElementSibling; el.style.display = el.style.display === "none" ? "block" : "none"; }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", background: AD.inp, border: `1px solid ${AD.inpB}`, borderRadius: 9, padding: "4px 10px 4px 4px", transition: "all 0.15s" }} onClick={(e) => { const el = e.currentTarget.nextElementSibling as HTMLElement | null; if (el) { el.style.display = el.style.display === "none" ? "block" : "none"; } }}>
           <div style={{ width: 26, height: 26, borderRadius: 6, background: `linear-gradient(135deg,${C.gold}40,${C.goldL}20)`, border: `1px solid ${C.gold}30`, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <span style={{ fontFamily: P, fontSize: 10, fontWeight: 700, color: C.gold }}>AA</span>
           </div>
