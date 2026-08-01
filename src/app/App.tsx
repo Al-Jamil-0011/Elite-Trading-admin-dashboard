@@ -194,17 +194,44 @@ function CTooltip({ active, payload, label }: any) {
   </div>;
 }
 
-function SCard({ label, value, change, icon: Icon, color, note }: { label: string; value: string; change?: string; icon: React.ElementType; color: string; note?: string }) {
+function SCard({ label, value, change, icon: Icon, color, note, sparkline }: { label: string; value: string; change?: string; icon: React.ElementType; color: string; note?: string; sparkline?: any[] }) {
   const pos = change?.startsWith("+");
-  return <ACard style={{ padding: "20px 22px", position: "relative", overflow: "hidden" }} hover>
-    <div style={{ position: "absolute", left: 0, top: 14, bottom: 14, width: 3, background: `linear-gradient(180deg,${color},${color}50)`, borderRadius: "0 3px 3px 0" }} />
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
-      <div style={{ width: 38, height: 38, borderRadius: 11, background: `${color}18`, border: `1px solid ${color}28`, display: "flex", alignItems: "center", justifyContent: "center" }}><Icon size={17} color={color} /></div>
-      {change && <span style={{ fontFamily: M, fontSize: 9, letterSpacing: "0.05em", color: pos ? C.buy : C.sell, background: pos ? "rgba(0,208,132,0.1)" : "rgba(255,90,107,0.1)", border: `1px solid ${pos ? "rgba(0,208,132,0.2)" : "rgba(255,90,107,0.2)"}`, borderRadius: 100, padding: "2px 8px" }}>{change}</span>}
+  return <ACard style={{ padding: "24px", position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", gap: 16 }} hover>
+    <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 4, background: `linear-gradient(180deg,${color},${color}00)`, opacity: 0.8 }} />
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ width: 48, height: 48, borderRadius: 14, background: `linear-gradient(135deg, ${color}22, ${color}05)`, border: `1px solid ${color}30`, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 4px 24px ${color}15`, backdropFilter: "blur(10px)" }}>
+          <Icon size={24} color={color} style={{ filter: `drop-shadow(0 2px 8px ${color}40)` }} />
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <div style={{ fontFamily: P, fontSize: 13, color: C.tm, fontWeight: 500 }}>{label}</div>
+          <div style={{ fontFamily: M, fontSize: 28, fontWeight: 700, color: C.t1, letterSpacing: "-1px", lineHeight: 1 }}>{value}</div>
+        </div>
+      </div>
+      {change && (
+        <div style={{ display: "flex", alignItems: "center", gap: 4, background: pos ? "rgba(0,208,132,0.12)" : "rgba(255,90,107,0.12)", padding: "6px 10px", borderRadius: 100, border: `1px solid ${pos ? "rgba(0,208,132,0.25)" : "rgba(255,90,107,0.25)"}` }}>
+          {pos ? <TUp size={14} color={C.buy} /> : <TrendingDown size={14} color={C.sell} />}
+          <span style={{ fontFamily: M, fontSize: 11, fontWeight: 600, color: pos ? C.buy : C.sell }}>{change}</span>
+        </div>
+      )}
     </div>
-    <div style={{ fontFamily: M, fontSize: 22, fontWeight: 700, color: C.t1, letterSpacing: "-0.6px", marginBottom: 3 }}>{value}</div>
-    <div style={{ fontFamily: P, fontSize: 12, color: C.tm }}>{label}</div>
-    {note && <div style={{ fontFamily: P, fontSize: 10, color: C.td, marginTop: 2 }}>{note}</div>}
+    {(note || sparkline) && (
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: 4 }}>
+        <div style={{ fontFamily: P, fontSize: 11.5, color: C.td }}>{note}</div>
+        {sparkline && (
+          <div style={{ width: 80, height: 24 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={sparkline}>
+                <defs>
+                  <linearGradient id={`spark-${color.replace('#', '')}`} x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={color} stopOpacity={0.4} /><stop offset="95%" stopColor={color} stopOpacity={0} /></linearGradient>
+                </defs>
+                <Area type="monotone" dataKey="v" stroke={color} fill={`url(#spark-${color.replace('#', '')})`} strokeWidth={2} dot={false} isAnimationActive={false} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+      </div>
+    )}
   </ACard>;
 }
 
@@ -216,44 +243,36 @@ function AdminNav({ section, onChange }: { section: AdminSection; onChange: (s: 
     ["MANAGE", [["signals", Zap, "Signals"], ["posts", BookOpen, "Posts"], ["notifications", Bell, "Notifications"]]],
     ["SYSTEM", [["subscriptions", CreditCard, "Subscriptions"], ["users", Users, "Users"], ["coupons", Tag, "Coupons"], ["settings", Settings, "Settings"]]],
   ];
-  return <nav style={{ width: 258, height: "100vh", background: AD.nav, borderRight: `1px solid ${AD.cardB}`, display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0 }}>
+  return <nav style={{ width: 280, height: "100vh", background: AD.nav, borderRight: `1px solid ${AD.cardB}`, display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, zIndex: 200 }}>
     {/* Logo */}
-    <div style={{ padding: "22px 20px 18px", borderBottom: `1px solid ${AD.cardB}` }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <div style={{ width: 38, height: 38, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-          <img src="/logo.png" alt="Elite Trading Logo" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
-        </div>
-        <div>
-          <div style={{ fontFamily: P, fontSize: 14, fontWeight: 700, color: C.t1, letterSpacing: "-0.2px" }}>Elite Trading</div>
-          <div style={{ fontFamily: M, fontSize: 7.5, color: C.gold, letterSpacing: "0.16em" }}>ADMIN CONSOLE</div>
-        </div>
-      </div>
+    <div style={{ padding: "16px 20px 16px", display: "flex", flexDirection: "column", gap: 8, borderBottom: `1px solid ${AD.cardB}` }}>
+      <img src="/logo.jpg" alt="Elite Trading Logo" style={{ width: 80, margin: "auto", height: "auto", objectFit: "contain" }} />
     </div>
     {/* Nav groups */}
-    <div style={{ flex: 1, padding: "12px 10px", overflowY: "auto", scrollbarWidth: "none", display: "flex", flexDirection: "column", gap: 2 }}>
-      {groups.map(([grp, items]) => <div key={grp} style={{ marginBottom: 6 }}>
-        <div style={{ fontFamily: M, fontSize: 8, color: C.td, letterSpacing: "0.14em", padding: "7px 10px 4px" }}>{grp}</div>
+    <div style={{ flex: 1, padding: "24px 16px", overflowY: "auto", scrollbarWidth: "none", display: "flex", flexDirection: "column", gap: 24 }}>
+      {groups.map(([grp, items]) => <div key={grp} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <div style={{ fontFamily: M, fontSize: 10, fontWeight: 600, color: C.td, letterSpacing: "0.1em", padding: "0 12px", marginBottom: 4 }}>{grp}</div>
         {items.map(([id, Icon, lbl]) => {
           const on = section === id;
-          return <button key={id} onClick={() => onChange(id)} className="a-nav-item" style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "8.5px 10px", borderRadius: 10, background: on ? "rgba(128,0,255,0.13)" : "transparent", color: on ? C.t1 : C.td, border: `1px solid ${on ? "rgba(128,0,255,0.22)" : "transparent"}`, cursor: "pointer", textAlign: "left", fontFamily: P, fontSize: 12.5, fontWeight: on ? 600 : 400, position: "relative", transition: "all 0.15s" }}>
-            {on && <div style={{ position: "absolute", left: 0, top: 7, bottom: 7, width: 2.5, background: C.brand, borderRadius: "0 3px 3px 0", boxShadow: `0 0 8px ${C.brand}` }} />}
-            <Icon size={14.5} color={on ? C.brand : C.td} />{lbl}
-            {on && <div style={{ marginLeft: "auto", width: 4.5, height: 4.5, borderRadius: "50%", background: C.brand, boxShadow: `0 0 6px ${C.brand}` }} />}
+          return <button key={id} onClick={() => onChange(id)} className="a-nav-item" style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", padding: "10px 12px", borderRadius: 8, background: on ? "rgba(128,0,255,0.08)" : "transparent", color: on ? C.t1 : C.t2, border: `1px solid ${on ? "rgba(128,0,255,0.15)" : "transparent"}`, cursor: "pointer", textAlign: "left", fontFamily: P, fontSize: 14, fontWeight: on ? 600 : 500, transition: "all 0.2s", position: "relative" }}>
+            {on && <div style={{ position: "absolute", left: 0, top: 8, bottom: 8, width: 3, background: C.brand, borderRadius: "0 4px 4px 0", boxShadow: `0 0 10px ${C.brand}` }} />}
+            <Icon size={18} color={on ? C.brand : C.td} style={{ transition: "color 0.2s" }} />{lbl}
+            {on && <div style={{ marginLeft: "auto", width: 6, height: 6, borderRadius: "50%", background: C.brand, boxShadow: `0 0 8px ${C.brand}` }} />}
           </button>;
         })}
       </div>)}
     </div>
     {/* Admin user */}
-    <div style={{ padding: "14px 16px", borderTop: `1px solid ${AD.cardB}` }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-        <div style={{ width: 30, height: 30, borderRadius: 9, flexShrink: 0, background: `linear-gradient(135deg,${C.gold}40,${C.goldL}20)`, border: `1px solid ${C.gold}30`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span style={{ fontFamily: P, fontSize: 9, fontWeight: 700, color: C.gold }}>AD</span>
+    <div style={{ padding: "24px", borderTop: `1px solid ${AD.cardB}`, background: "rgba(0,0,0,0.2)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer", padding: "8px", borderRadius: 8, transition: "background 0.2s" }} className="a-nav-user-hov">
+        <div style={{ width: 40, height: 40, borderRadius: 12, background: `linear-gradient(135deg,${C.gold}40,${C.goldL}20)`, border: `1px solid ${C.gold}30`, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }}>
+          <span style={{ fontFamily: P, fontSize: 13, fontWeight: 700, color: C.gold }}>AA</span>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: P, fontSize: 11, fontWeight: 600, color: C.t1 }}>Administrator</div>
-          <div style={{ fontFamily: P, fontSize: 10, color: C.td, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>admin@elite.io</div>
+          <div style={{ fontFamily: P, fontSize: 14, fontWeight: 600, color: C.t1, marginBottom: 2 }}>Ahmed Alhajji</div>
+          <div style={{ fontFamily: P, fontSize: 12, color: C.td, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Administrator</div>
         </div>
-        <ChevronDown size={13} color={C.td} />
+        <Settings size={16} color={C.td} />
       </div>
     </div>
   </nav>;
@@ -263,60 +282,47 @@ function AdminNav({ section, onChange }: { section: AdminSection; onChange: (s: 
 
 function AdminTopBar({ section }: { section: AdminSection }) {
   const titles: Record<AdminSection, [string, string]> = {
-    dashboard: ["Dashboard", "Overview & Analytics"],
-    signals: ["Signals", "Manage Trading Signals"],
-    posts: ["Posts", "Content Management"],
-    notifications: ["Notifications", "Push Notification Center"],
-    subscriptions: ["Subscriptions", "Plans & Billing"],
-    users: ["Users", "Member Management"],
-    coupons: ["Coupons", "Promotions & Discounts"],
-    settings: ["Settings", "System Configuration"],
+    dashboard: ["Overview", "Monitor key metrics and system performance"],
+    signals: ["Signals", "Manage and publish trading signals"],
+    posts: ["Posts", "Content and announcement management"],
+    notifications: ["Notifications", "Push notification center"],
+    subscriptions: ["Subscriptions", "Plans and billing management"],
+    users: ["Users", "Member management and CRM"],
+    coupons: ["Coupons", "Promotions and discounts"],
+    settings: ["Settings", "System configuration and preferences"],
   };
   const [title, subtitle] = titles[section];
   const [q, setQ] = useState("");
   const now = new Date();
   const tStr = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
-  return <div style={{ height: 60, background: "rgba(7,5,18,0.96)", backdropFilter: "blur(20px)", borderBottom: `1px solid ${AD.cardB}`, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 28px", flexShrink: 0, position: "sticky", top: 0, zIndex: 100 }}>
-    <div>
-      <div style={{ fontFamily: P, fontSize: 16, fontWeight: 700, color: C.t1, letterSpacing: "-0.3px" }}>{title}</div>
-      <div style={{ fontFamily: P, fontSize: 10.5, color: C.td }}>{subtitle}</div>
+
+  return <div style={{ height: 80, background: "rgba(7,5,26,0.85)", backdropFilter: "blur(24px)", borderBottom: `1px solid ${AD.cardB}`, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 40px", flexShrink: 0, position: "sticky", top: 0, zIndex: 100 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <div style={{ fontFamily: P, fontSize: 24, fontWeight: 700, color: C.t1, letterSpacing: "-0.5px" }}>{title}</div>
+      <div style={{ fontFamily: P, fontSize: 13, color: C.tm }}>{subtitle}</div>
     </div>
-    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-      <div style={{ fontFamily: M, fontSize: 10.5, color: C.td, letterSpacing: "0.05em" }}>{tStr} · Jul 23, 2026</div>
-      <div style={{ display: "flex", alignItems: "center", gap: 7, background: AD.inp, border: `1px solid ${AD.inpB}`, borderRadius: 9, padding: "7px 12px", width: 186 }}>
-        <Search size={12} color={C.td} />
-        <input value={q} onChange={e => setQ(e.target.value)} placeholder="Quick search…" style={{ background: "none", border: "none", outline: "none", fontFamily: P, fontSize: 12, color: C.t1, caretColor: C.brand, width: "100%" }} />
-      </div>
-      <div style={{ position: "relative", marginRight: 6 }}>
-        <div style={{ width: 34, height: 34, borderRadius: 9, background: AD.inp, border: `1px solid ${AD.inpB}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Bell size={14} color={C.t2} /></div>
-        <div style={{ position: "absolute", top: -2, right: -2, width: 15, height: 15, borderRadius: "50%", background: `linear-gradient(135deg,${C.brand},${C.brandH})`, display: "flex", alignItems: "center", justifyContent: "center", border: `2px solid ${AD.bg}` }}><span style={{ fontFamily: M, fontSize: 7, fontWeight: 700, color: "#fff" }}>3</span></div>
+
+    <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, background: "rgba(255,255,255,0.02)", border: `1px solid ${AD.inpB}`, borderRadius: 12, padding: "10px 16px", width: 280, boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1)", transition: "all 0.2s" }} className="a-search-focus">
+        <Search size={16} color={C.tm} />
+        <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search everything..." style={{ background: "none", border: "none", outline: "none", fontFamily: P, fontSize: 14, color: C.t1, width: "100%" }} />
+        <div style={{ display: "flex", gap: 4 }}>
+          <kbd style={{ fontFamily: M, fontSize: 10, background: "rgba(255,255,255,0.1)", color: C.tm, padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(255,255,255,0.05)" }}>⌘</kbd>
+          <kbd style={{ fontFamily: M, fontSize: 10, background: "rgba(255,255,255,0.1)", color: C.tm, padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(255,255,255,0.05)" }}>K</kbd>
+        </div>
       </div>
 
-      {/* Admin Profile Dropdown */}
-      <div style={{ position: "relative" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", background: AD.inp, border: `1px solid ${AD.inpB}`, borderRadius: 9, padding: "4px 10px 4px 4px", transition: "all 0.15s" }} onClick={(e) => { const el = e.currentTarget.nextElementSibling as HTMLElement | null; if (el) { el.style.display = el.style.display === "none" ? "block" : "none"; } }}>
-          <div style={{ width: 26, height: 26, borderRadius: 6, background: `linear-gradient(135deg,${C.gold}40,${C.goldL}20)`, border: `1px solid ${C.gold}30`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontFamily: P, fontSize: 10, fontWeight: 700, color: C.gold }}>AA</span>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontFamily: P, fontSize: 11, fontWeight: 600, color: C.t1, lineHeight: 1.1 }}>Ahmed Alhajji</span>
-            <span style={{ fontFamily: P, fontSize: 9, color: C.td, lineHeight: 1.1 }}>Administrator</span>
-          </div>
-          <ChevronDown size={14} color={C.td} style={{ marginLeft: 4 }} />
+      <div style={{ width: 1, height: 24, background: AD.cardB }} />
+
+      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ fontFamily: M, fontSize: 12, color: C.td, letterSpacing: "0.05em", textAlign: "right" }}>
+          <div>{tStr}</div>
+          <div style={{ fontSize: 10, marginTop: 2 }}>Jul 23, 2026</div>
         </div>
 
-        {/* Dropdown Menu - Native CSS based toggle */}
-        <div style={{ display: "none", position: "absolute", top: "100%", right: 0, marginTop: 10, background: "#161326", border: `1px solid rgba(255,255,255,0.08)`, borderRadius: 12, width: 200, padding: "8px", boxShadow: "0 16px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,0,0,0.8)", zIndex: 2000 }}>
-          <button className="a-dd-item" style={{ color: C.t1 }}>
-            <User size={15} color={C.t2} /> Profile
-          </button>
-          <button className="a-dd-item" style={{ color: C.t1 }}>
-            <Settings size={15} color={C.t2} /> Account Settings
-          </button>
-          <div style={{ height: 1, background: AD.cardB, margin: "6px 0" }} />
-          <button className="a-dd-item" style={{ color: C.sell }}>
-            <LogOut size={15} /> Logout
-          </button>
+        <div style={{ position: "relative", cursor: "pointer", width: 44, height: 44, borderRadius: 12, background: "rgba(255,255,255,0.03)", border: `1px solid rgba(255,255,255,0.06)`, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }} className="a-icon-btn-hov">
+          <Bell size={20} color={C.t2} />
+          <div style={{ position: "absolute", top: 10, right: 10, width: 8, height: 8, borderRadius: "50%", background: C.sell, border: `2px solid ${AD.nav}`, boxShadow: `0 0 8px ${C.sell}` }} />
         </div>
       </div>
     </div>
@@ -326,119 +332,162 @@ function AdminTopBar({ section }: { section: AdminSection }) {
 // ─── Dashboard Home ───────────────────────────────────────────────────────────
 
 function ADashboard() {
+  const SPARK1 = [{ v: 10 }, { v: 15 }, { v: 13 }, { v: 20 }, { v: 18 }, { v: 25 }];
+  const SPARK2 = [{ v: 25 }, { v: 20 }, { v: 22 }, { v: 15 }, { v: 18 }, { v: 10 }];
+  const SPARK3 = [{ v: 5 }, { v: 10 }, { v: 8 }, { v: 15 }, { v: 12 }, { v: 20 }];
+
   const r1: Parameters<typeof SCard>[0][] = [
-    { label: "Total Subscribers", value: "1,247", change: "+12.4%", icon: Users, color: C.brand },
-    { label: "Active VIP Members", value: "384", change: "+8.2%", icon: Crown, color: C.gold },
-    { label: "Forex Subscribers", value: "521", change: "+15.1%", icon: TrendingUp, color: C.buy },
-    { label: "Crypto Subscribers", value: "289", change: "+6.7%", icon: Zap, color: "#60A5FA" },
+    { label: "Total Subscribers", value: "1,247", change: "+12.4%", icon: Users, color: C.brand, sparkline: SPARK1 },
+    { label: "Active VIP Members", value: "384", change: "+8.2%", icon: Crown, color: C.gold, sparkline: SPARK1 },
+    { label: "Forex Subscribers", value: "521", change: "+15.1%", icon: TrendingUp, color: C.buy, sparkline: SPARK3 },
+    { label: "Crypto Subscribers", value: "289", change: "+6.7%", icon: Zap, color: "#60A5FA", sparkline: SPARK1 },
   ];
-  const r2: Parameters<typeof SCard>[0][] = [
-    { label: "Active Free Trials", value: "53", icon: Star, color: "#C084FC", note: "2 expire today" },
-    { label: "Signals Today", value: "3", icon: Activity, color: C.buy, note: "2 active · 1 draft" },
-    { label: "Posts Today", value: "1", icon: FileText, color: C.gold, note: "Published" },
-    { label: "Monthly Revenue", value: "$48,230", change: "+18.3%", icon: DollarSign, color: C.buy },
-  ];
-  return <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 22 }}>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 13 }}>
+
+  return <div style={{ padding: "40px", display: "flex", flexDirection: "column", gap: 32 }}>
+
+    {/* Top Actions & Market Overview Row */}
+    <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 24, alignItems: "center" }}>
+      <div style={{ display: "flex", gap: 16 }}>
+        <APrimary icon={<Zap size={16} />}>Publish Signal</APrimary>
+        <AGhost icon={<BookOpen size={16} />}>Create Post</AGhost>
+        <AGhost icon={<Bell size={16} />}>Send Notification</AGhost>
+      </div>
+      <div style={{ display: "flex", gap: 16, background: "rgba(255,255,255,0.02)", padding: "8px 16px", borderRadius: 12, border: `1px solid ${AD.cardB}` }}>
+        {[{ s: "BTC", p: "67,420", c: "+2.4%", up: true }, { s: "GOLD", p: "2,450", c: "+1.2%", up: true }, { s: "NAS100", p: "19,840", c: "-0.5%", up: false }].map(m => (
+          <div key={m.s} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontFamily: P, fontSize: 12, color: C.td, fontWeight: 600 }}>{m.s}</span>
+            <span style={{ fontFamily: M, fontSize: 13, color: C.t1 }}>{m.p}</span>
+            <span style={{ fontFamily: M, fontSize: 11, color: m.up ? C.buy : C.sell }}>{m.c}</span>
+            <div style={{ width: 1, height: 16, background: AD.cardB, margin: "0 4px" }} />
+          </div>
+        ))}
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.buy, boxShadow: `0 0 8px ${C.buy}` }} />
+          <span style={{ fontFamily: P, fontSize: 11, color: C.t2 }}>System Operational</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Primary KPIs */}
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 24 }}>
       {r1.map(s => <SCard key={s.label} {...s} />)}
     </div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 13 }}>
-      {r2.map(s => <SCard key={s.label} {...s} />)}
-    </div>
-    {/* Charts row 1 */}
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 18 }}>
-      <ACard style={{ padding: "22px 24px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
+
+    {/* Charts Row 1 */}
+    <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 24 }}>
+      <ACard style={{ padding: "32px", display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
           <div>
-            <div style={{ fontFamily: P, fontSize: 14, fontWeight: 700, color: C.t1, letterSpacing: "-0.2px", marginBottom: 2 }}>Subscription Growth</div>
-            <div style={{ fontFamily: M, fontSize: 9, color: C.td, letterSpacing: "0.1em" }}>6-MONTH TREND · ALL PLANS</div>
+            <div style={{ fontFamily: P, fontSize: 18, fontWeight: 700, color: C.t1, letterSpacing: "-0.4px", marginBottom: 4 }}>Subscription Growth</div>
+            <div style={{ fontFamily: M, fontSize: 11, color: C.td, letterSpacing: "0.1em" }}>6-MONTH TREND · ALL PLANS</div>
           </div>
-          <div style={{ display: "flex", gap: 14 }}>
+          <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
             {[{ l: "VIP", c: C.brand }, { l: "Forex", c: C.gold }, { l: "Crypto", c: "#60A5FA" }].map(({ l, c }) => (
-              <div key={l} style={{ display: "flex", alignItems: "center", gap: 5 }}><div style={{ width: 7, height: 7, borderRadius: "50%", background: c }} /><span style={{ fontFamily: P, fontSize: 10.5, color: C.tm }}>{l}</span></div>
+              <div key={l} style={{ display: "flex", alignItems: "center", gap: 8 }}><div style={{ width: 10, height: 10, borderRadius: "50%", background: c, boxShadow: `0 0 8px ${c}80` }} /><span style={{ fontFamily: P, fontSize: 12, color: C.t2, fontWeight: 500 }}>{l}</span></div>
             ))}
+            <div style={{ width: 1, height: 24, background: AD.cardB, margin: "0 8px" }} />
+            <ASel value="6M" onChange={() => { }} opts={[{ l: "7 Days", v: "7D" }, { l: "30 Days", v: "30D" }, { l: "6 Months", v: "6M" }]} />
           </div>
         </div>
-        <ResponsiveContainer width="100%" height={200}>
-          <AreaChart data={GROWTH_DATA} margin={{ top: 4, right: 4, bottom: 0, left: -8 }}>
-            <defs>
-              <linearGradient id="gV" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={C.brand} stopOpacity={0.25} /><stop offset="95%" stopColor={C.brand} stopOpacity={0} /></linearGradient>
-              <linearGradient id="gF" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={C.gold} stopOpacity={0.2} /><stop offset="95%" stopColor={C.gold} stopOpacity={0} /></linearGradient>
-              <linearGradient id="gC" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#60A5FA" stopOpacity={0.18} /><stop offset="95%" stopColor="#60A5FA" stopOpacity={0} /></linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-            <XAxis dataKey="m" tick={{ fontFamily: M, fontSize: 9, fill: C.td }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontFamily: M, fontSize: 9, fill: C.td }} axisLine={false} tickLine={false} width={30} />
-            <Tooltip content={<CTooltip />} />
-            <Area type="monotone" dataKey="v" name="VIP" stroke={C.brand} fill="url(#gV)" strokeWidth={1.8} dot={false} />
-            <Area type="monotone" dataKey="f" name="Forex" stroke={C.gold} fill="url(#gF)" strokeWidth={1.8} dot={false} />
-            <Area type="monotone" dataKey="c" name="Crypto" stroke="#60A5FA" fill="url(#gC)" strokeWidth={1.8} dot={false} />
-          </AreaChart>
-        </ResponsiveContainer>
-      </ACard>
-      {/* Donut */}
-      <ACard style={{ padding: "22px 24px" }}>
-        <div style={{ marginBottom: 16 }}>
-          <div style={{ fontFamily: P, fontSize: 14, fontWeight: 700, color: C.t1, letterSpacing: "-0.2px", marginBottom: 2 }}>Signal Performance</div>
-          <div style={{ fontFamily: M, fontSize: 9, color: C.td, letterSpacing: "0.1em" }}>ALL TIME · 286 SIGNALS</div>
-        </div>
-        <div style={{ position: "relative", height: 158 }}>
+        <div style={{ flex: 1, minHeight: 280 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie data={PERF_DATA} cx="50%" cy="50%" innerRadius={50} outerRadius={70} paddingAngle={3} dataKey="v" strokeWidth={0}>
-                {PERF_DATA.map((e, i) => <Cell key={i} fill={e.color} />)}
-              </Pie>
-              <Tooltip content={<CTooltip />} />
-            </PieChart>
+            <AreaChart data={GROWTH_DATA} margin={{ top: 10, right: 0, bottom: 0, left: -20 }}>
+              <defs>
+                <linearGradient id="gV" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={C.brand} stopOpacity={0.4} /><stop offset="95%" stopColor={C.brand} stopOpacity={0} /></linearGradient>
+                <linearGradient id="gF" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={C.gold} stopOpacity={0.3} /><stop offset="95%" stopColor={C.gold} stopOpacity={0} /></linearGradient>
+                <linearGradient id="gC" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#60A5FA" stopOpacity={0.25} /><stop offset="95%" stopColor="#60A5FA" stopOpacity={0} /></linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+              <XAxis dataKey="m" tick={{ fontFamily: M, fontSize: 11, fill: C.td }} axisLine={false} tickLine={false} dy={10} />
+              <YAxis tick={{ fontFamily: M, fontSize: 11, fill: C.td }} axisLine={false} tickLine={false} dx={-10} />
+              <Tooltip content={<CTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 2 }} />
+              <Area type="monotone" dataKey="v" name="VIP" stroke={C.brand} fill="url(#gV)" strokeWidth={3} activeDot={{ r: 6, fill: C.brand, stroke: '#fff', strokeWidth: 2 }} />
+              <Area type="monotone" dataKey="f" name="Forex" stroke={C.gold} fill="url(#gF)" strokeWidth={3} activeDot={{ r: 6, fill: C.gold, stroke: '#fff', strokeWidth: 2 }} />
+              <Area type="monotone" dataKey="c" name="Crypto" stroke="#60A5FA" fill="url(#gC)" strokeWidth={3} activeDot={{ r: 6, fill: "#60A5FA", stroke: '#fff', strokeWidth: 2 }} />
+            </AreaChart>
           </ResponsiveContainer>
-          <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", textAlign: "center", pointerEvents: "none" }}>
-            <div style={{ fontFamily: M, fontSize: 18, fontWeight: 700, color: C.t1, lineHeight: 1 }}>62%</div>
-            <div style={{ fontFamily: P, fontSize: 9, color: C.td, marginTop: 2 }}>Win Rate</div>
-          </div>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 8 }}>
-          {PERF_DATA.map(e => <div key={e.n} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 7 }}><div style={{ width: 7, height: 7, borderRadius: "50%", background: e.color }} /><span style={{ fontFamily: P, fontSize: 11.5, color: C.tm }}>{e.n}</span></div>
-            <span style={{ fontFamily: M, fontSize: 12, fontWeight: 600, color: C.t1 }}>{e.v}%</span>
-          </div>)}
         </div>
       </ACard>
-    </div>
-    {/* Charts row 2 */}
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 18 }}>
-      <ACard style={{ padding: "22px 24px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
-          <div>
-            <div style={{ fontFamily: P, fontSize: 14, fontWeight: 700, color: C.t1, letterSpacing: "-0.2px", marginBottom: 2 }}>Revenue Analytics</div>
-            <div style={{ fontFamily: M, fontSize: 9, color: C.td, letterSpacing: "0.1em" }}>MONTHLY · USD · SUBSCRIPTIONS ONLY</div>
-          </div>
-          <AGhost icon={<Download size={12} />} size="sm">Export CSV</AGhost>
-        </div>
-        <ResponsiveContainer width="100%" height={182}>
-          <BarChart data={REVENUE_DATA} margin={{ top: 4, right: 4, bottom: 0, left: -8 }} barSize={34}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-            <XAxis dataKey="m" tick={{ fontFamily: M, fontSize: 9, fill: C.td }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontFamily: M, fontSize: 9, fill: C.td }} axisLine={false} tickLine={false} width={44} tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
-            <Tooltip content={<CTooltip />} />
-            <Bar dataKey="r" name="Revenue" radius={[5, 5, 0, 0]}>
-              {REVENUE_DATA.map((_, i) => <Cell key={i} fill={i === REVENUE_DATA.length - 1 ? C.gold : C.brand} fillOpacity={0.65 + i * 0.06} />)}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </ACard>
-      {/* Activity */}
-      <ACard style={{ padding: "22px 24px" }}>
-        <div style={{ marginBottom: 16 }}>
-          <div style={{ fontFamily: P, fontSize: 14, fontWeight: 700, color: C.t1, letterSpacing: "-0.2px", marginBottom: 2 }}>Recent Activity</div>
-          <div style={{ fontFamily: M, fontSize: 9, color: C.td, letterSpacing: "0.1em" }}>LIVE · LAST 24H</div>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          {AACTIVITY.map((a, i) => <div key={i} style={{ display: "flex", gap: 11, padding: "10px 0", borderBottom: i < AACTIVITY.length - 1 ? `1px solid ${AD.cardB}` : "none", alignItems: "flex-start" }}>
-            <div style={{ width: 30, height: 30, borderRadius: 9, flexShrink: 0, background: `${a.col}12`, border: `1px solid ${a.col}20`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>{a.icon}</div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontFamily: P, fontSize: 11, color: C.t2, lineHeight: 1.45 }}>{a.text}</div>
-              <div style={{ fontFamily: M, fontSize: 9, color: C.td, marginTop: 2 }}>{a.time}</div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        <ACard style={{ padding: "32px", flex: 1, display: "flex", flexDirection: "column" }}>
+          <div style={{ marginBottom: 16, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div>
+              <div style={{ fontFamily: P, fontSize: 18, fontWeight: 700, color: C.t1, letterSpacing: "-0.4px", marginBottom: 4 }}>Signal Performance</div>
+              <div style={{ fontFamily: M, fontSize: 11, color: C.td, letterSpacing: "0.1em" }}>ALL TIME · 286 SIGNALS</div>
             </div>
+            <div style={{ fontFamily: M, fontSize: 32, fontWeight: 700, color: C.t1, letterSpacing: "-1px" }}>62<span style={{ fontSize: 16, color: C.tm }}>%</span></div>
+          </div>
+          <div style={{ position: "relative", flex: 1, minHeight: 180, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={PERF_DATA} cx="50%" cy="50%" innerRadius={65} outerRadius={90} paddingAngle={4} dataKey="v" stroke="none" cornerRadius={6}>
+                  {PERF_DATA.map((e, i) => <Cell key={i} fill={e.color} style={{ filter: `drop-shadow(0 4px 12px ${e.color}40)` }} />)}
+                </Pie>
+                <Tooltip content={<CTooltip />} cursor={false} />
+              </PieChart>
+            </ResponsiveContainer>
+            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", textAlign: "center", pointerEvents: "none" }}>
+              <Activity size={24} color={C.tm} style={{ opacity: 0.5 }} />
+            </div>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 16, padding: "16px", background: "rgba(255,255,255,0.02)", borderRadius: 12, border: `1px solid rgba(255,255,255,0.04)` }}>
+            {PERF_DATA.map(e => <div key={e.n} style={{ display: "flex", flexDirection: "column", gap: 4, alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}><div style={{ width: 8, height: 8, borderRadius: "50%", background: e.color, boxShadow: `0 0 8px ${e.color}80` }} /><span style={{ fontFamily: P, fontSize: 12, color: C.tm, fontWeight: 500 }}>{e.n}</span></div>
+              <span style={{ fontFamily: M, fontSize: 16, fontWeight: 700, color: C.t1 }}>{e.v}%</span>
+            </div>)}
+          </div>
+        </ACard>
+      </div>
+    </div>
+
+    {/* Secondary Info Row */}
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+      <ACard style={{ padding: "32px", display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
+          <div>
+            <div style={{ fontFamily: P, fontSize: 18, fontWeight: 700, color: C.t1, letterSpacing: "-0.4px", marginBottom: 4 }}>Revenue Analytics</div>
+            <div style={{ fontFamily: M, fontSize: 11, color: C.td, letterSpacing: "0.1em" }}>MONTHLY USD · SUBSCRIPTIONS</div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontFamily: M, fontSize: 24, fontWeight: 700, color: C.t1 }}>$48,230</div>
+              <div style={{ fontFamily: M, fontSize: 11, color: C.buy }}>+18.3% this month</div>
+            </div>
+            <AGhost icon={<Download size={14} />}>Export</AGhost>
+          </div>
+        </div>
+        <div style={{ flex: 1, minHeight: 220 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={REVENUE_DATA} margin={{ top: 10, right: 0, bottom: 0, left: -10 }} barSize={42}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+              <XAxis dataKey="m" tick={{ fontFamily: M, fontSize: 11, fill: C.td }} axisLine={false} tickLine={false} dy={10} />
+              <YAxis tick={{ fontFamily: M, fontSize: 11, fill: C.td }} axisLine={false} tickLine={false} dx={-10} tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
+              <Tooltip content={<CTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
+              <Bar dataKey="r" name="Revenue" radius={[6, 6, 0, 0]}>
+                {REVENUE_DATA.map((_, i) => <Cell key={i} fill={i === REVENUE_DATA.length - 1 ? C.gold : C.brand} fillOpacity={0.8} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </ACard>
+
+      <ACard style={{ padding: "32px", display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
+          <div>
+            <div style={{ fontFamily: P, fontSize: 18, fontWeight: 700, color: C.t1, letterSpacing: "-0.4px", marginBottom: 4 }}>Activity Feed</div>
+            <div style={{ fontFamily: M, fontSize: 11, color: C.td, letterSpacing: "0.1em" }}>LIVE · LAST 24H</div>
+          </div>
+          <AGhost size="sm">View All</AGhost>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {AACTIVITY.map((a, i) => <div key={i} style={{ display: "flex", gap: 16, alignItems: "center", padding: "12px", borderRadius: 12, background: "rgba(255,255,255,0.015)", border: `1px solid rgba(255,255,255,0.03)`, transition: "background 0.2s" }} className="a-activity-hov">
+            <div style={{ width: 42, height: 42, borderRadius: 12, flexShrink: 0, background: `linear-gradient(135deg, ${a.col}20, ${a.col}05)`, border: `1px solid ${a.col}30`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, boxShadow: `0 4px 12px ${a.col}10` }}>{a.icon}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontFamily: P, fontSize: 13, color: C.t1, fontWeight: 500, marginBottom: 4 }}>{a.text}</div>
+              <div style={{ fontFamily: M, fontSize: 11, color: C.td }}>{a.time}</div>
+            </div>
+            <div style={{ width: 32, height: 32, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.03)", cursor: "pointer" }}><ChevronRight size={14} color={C.td} /></div>
           </div>)}
         </div>
       </ACard>
