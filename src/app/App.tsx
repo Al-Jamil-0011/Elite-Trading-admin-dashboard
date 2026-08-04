@@ -843,7 +843,7 @@ function ASubscriptions() {
               <button className="a-btn" onClick={() => setActionMenu(actionMenu === plan.id ? null : plan.id)} style={{ width: 32, height: 32, borderRadius: 8, background: "transparent", border: "none", color: C.td, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><MoreHorizontal size={18} /></button>
               {actionMenu === plan.id && <div style={{ position: "absolute", right: 0, top: 36, background: AD.inp, border: `1px solid ${AD.inpB}`, borderRadius: 12, padding: 6, width: 180, zIndex: 20, boxShadow: "0 12px 32px rgba(0,0,0,0.6)" }}>
                 <button className="a-dd-item" onClick={() => { setEditing(plan.id); setActionMenu(null); }}><Pencil size={14} /> Edit Plan</button>
-                <button className="a-dd-item" onClick={() => { setActionMenu(null); }}><PieIcon size={14} /> Duplicate Plan</button>
+                {/* <button className="a-dd-item" onClick={() => { setActionMenu(null); }}><PieIcon size={14} /> Duplicate Plan</button> */}
                 <button className="a-dd-item" onClick={() => { setActionMenu(null); }}><EyeOff size={14} /> {plan.status === "Active" ? "Disable" : "Enable"}</button>
                 <button className="a-dd-item" onClick={() => { setActionMenu(null); }}><Users size={14} /> View Subscribers</button>
                 <div style={{ height: 1, background: AD.cardB, margin: "4px 0" }} />
